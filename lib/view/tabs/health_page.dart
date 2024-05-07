@@ -28,6 +28,7 @@ class _HeathPageState extends State<HealthPage> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       page = page + 1;
+      
     });
     print("page = $page");
     Provider.of<HealthProvider>(context, listen: false)
