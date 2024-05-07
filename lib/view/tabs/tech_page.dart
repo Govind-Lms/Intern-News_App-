@@ -15,21 +15,17 @@ class TechPage extends StatefulWidget {
 }
 
 class _TechPageState extends State<TechPage> {
-  int page = 1;
   @override
   void initState() {
     super.initState();
-    (context).read<TechProvider>().getTechArticles(page);
+    (context).read<TechProvider>().getTechArticles();
   }
   RefreshController refreshController = RefreshController(initialRefresh: false);
   void _onRefresh() async{
     await Future.delayed(const Duration(seconds: 1));
-    setState(() {
-      page = page + 1;
-    });
-    print("page = $page");
+  
     Provider.of<TechProvider>(context, listen: false)
-        .getTechArticles(page);
+        .getTechArticles();
     refreshController.refreshCompleted();
   }
 
@@ -50,6 +46,11 @@ class _TechPageState extends State<TechPage> {
             controller: refreshController,
             header: const ClassicHeader(),
             onRefresh: _onRefresh,
+            enablePullUp: true,
+            onLoading: (){
+              (context).read<TechProvider>().getMoreTechArticles();
+              refreshController.loadComplete();
+            },
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: articles.length,

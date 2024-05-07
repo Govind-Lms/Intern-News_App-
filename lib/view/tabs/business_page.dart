@@ -20,7 +20,7 @@ class _BusinessPageState extends State<BusinessPage> {
   @override
   void initState() {
     super.initState();
-    context.read<BusinessProvider>().getBusinessArticle(page);
+    context.read<BusinessProvider>().getBusinessArticle();
   }
 
   RefreshController refreshController =
@@ -33,7 +33,7 @@ class _BusinessPageState extends State<BusinessPage> {
     });
     print("page = $page");
     Provider.of<BusinessProvider>(context, listen: false)
-        .getBusinessArticle(page);
+        .getBusinessArticle();
     refreshController.refreshCompleted();
   }
 
@@ -49,8 +49,13 @@ class _BusinessPageState extends State<BusinessPage> {
         } else if (response.apiState == ApiState.success) {
           List<Article> articles = response.data as List<Article>;
           return SmartRefresher(
+            enablePullUp: true,
             header: const ClassicHeader(),
             onRefresh: _onRefresh,
+            onLoading: () {
+              (context).read<BusinessProvider>().getMoreBusiness();
+              refreshController.loadComplete();
+            },
             controller: refreshController,
             child: ListView.builder(
                 shrinkWrap: true,

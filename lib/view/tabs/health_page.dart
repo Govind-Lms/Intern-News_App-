@@ -15,24 +15,19 @@ class HealthPage extends StatefulWidget {
 }
 
 class _HeathPageState extends State<HealthPage> {
-  int page = 1;
+  // int page = 1;
   @override
   void initState() {
     super.initState();
-    (context).read<HealthProvider>().getHealthArticles(page);
+    (context).read<HealthProvider>().getHealthArticles();
   }
 
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
   void _onRefresh() async {
     await Future.delayed(const Duration(seconds: 1));
-    setState(() {
-      page = page + 1;
-      
-    });
-    print("page = $page");
     Provider.of<HealthProvider>(context, listen: false)
-        .getHealthArticles(page);
+        .getHealthArticles();
     refreshController.refreshCompleted();
   }
 
@@ -51,7 +46,12 @@ class _HeathPageState extends State<HealthPage> {
           return SmartRefresher(
             controller: refreshController,
             header: const ClassicHeader(),
+            enablePullUp: true,
             onRefresh: _onRefresh,
+            onLoading: (){
+              (context).read<HealthProvider>().getMoreHealthArticles();
+              refreshController.loadComplete();
+            },
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: articles.length,
